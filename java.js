@@ -156,36 +156,47 @@ const viewAll  = () => {
       });
     }; 
 
-const updateProgram = () => {
-    let query =
-    'Select roles.title, roles.salary, department.d_name '
+    const updateProgram = () => {
+      let query =
+      'Select employee.first_name, employee.last_name, roles.title, roles.salary, department.d_name, roles.id '
     query +=
-    'FROM roles INNER JOIN department ON (roles.department_id = department.id);'
-    console.log(query)
-    connection.query(query, (err, res) => {
-        console.table(res);
-    }};
+    'FROM employee INNER JOIN roles ON (employee.role_id = roles.id) '
+    query +=
+    'INNER JOIN department ON (roles.department_id = department.id);'
+      console.log(query)
+      connection.query(query, (err, res) => {
+          console.table(res);
+          inquirer
+        .prompt([
+          {
+          name: 'lastName',
+          type: 'input',
+          message: 'What is the last name of the employee you would like to update'
 
-    inquirer
-      .prompt([
-        {
-        role: 'role',
-        type: 'input',
-        message: 'What is the employees new role'
-        }]
-
-        .then((answer) => {
-        const query = connection.query(
-          'UPDATE employee SET ? WHERE ?',
-          [
-            {
-              role: answer,
-            },
-            
-          ],
-          (err, res) => {
-            if (err) throw err;
-            console.log(`${res.affectedRows} employee updated!\n`);
-          }
-        );
-        }))};
+          },
+          {
+          name:'role',
+          type: 'input',
+          message: 'What is the employees new role id'
+          }]
+  
+          ).then((answer) => {
+          const query = connection.query(
+            'UPDATE employee SET ? WHERE ?',
+            [
+              {
+                role_id: answer.role,
+              },
+              {
+                last_name: answer.lastName,
+              }
+            ],
+            (err, res) => {
+              if (err) throw err;
+              console.log(`${res.affectedRows} employee updated!\n`);
+              runProgram();
+            }
+          );
+          })
+      });
+      };
