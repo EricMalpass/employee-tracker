@@ -157,7 +157,16 @@ const viewAll  = () => {
     }; 
 
 const updateProgram = () => {
-        inquirer
+    let query =
+    'Select roles.title, roles.salary, department.d_name '
+    query +=
+    'FROM roles INNER JOIN department ON (roles.department_id = department.id);'
+    console.log(query)
+    connection.query(query, (err, res) => {
+        console.table(res);
+    }};
+
+    inquirer
       .prompt([
         {
         role: 'role',
